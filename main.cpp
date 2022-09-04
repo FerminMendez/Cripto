@@ -4,175 +4,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "math.h"
+#include "Hex.h"
+#include "Block.h"
 
 using namespace std;
-
-class Block
-{
-public:
-	string mat[4][4]; // String hexadecimales
-	void print();
-	Block(string s); // Construcotr
-
-	void swapCol(int i, int j); // i y j entre 0 y 3
-	void swapRow(int i, int j);
-	void sumCol(int i, int x); // i y j entre 0 y 3
-	void sumRow(int i, int x);
-
-	void rotation();
-	void invRotation();
-
-	void rotacionDiagnoalDifusion();
-	void revertirBinarioConfusion();
-	void multiplicacionClaveConfusion();
-
-	string translate();
-
-private:
-	void swap(int x1, int y1, int x2, int y2);
-	void sum(int i, int j, int x);
-};
-
-Block ::Block(string s)
-{
-	stringstream ss;
-	for (int i = 0; i < 16; ++i)
-	{
-		ss << hex << (int)s[i];
-		mat[i / 4][i % 4] = ss.str();
-		ss.str("");
-	}
-}
-
-void Block::swap(int x1, int y1, int x2, int y2)
-{
-	string t = mat[x1][y1];
-	mat[x1][y1] = mat[x2][y2];
-	mat[x2][y2] = t;
-}
-
-void Block::sum(int i, int j, int x)
-{
-	//x = x % 256;
-	mat[i][j] = to_string(x) + (mat[i][j]);
-}
-
-void Block::swapCol(int i, int j)
-{
-	for (int k = 0; k < 4; k++)
-	{
-		swap(k, i, k, j);
-	}
-}
-
-void Block::swapRow(int i, int j)
-{
-	for (int k = 0; k < 4; k++)
-	{
-		swap(i, k, j, k);
-	}
-}
-
-void Block::sumCol(int i, int x)
-{
-	for (int k = 0; k < 4; k++)
-	{
-		sum(i, k, x);
-	}
-}
-
-void Block::sumRow(int i, int x)
-{
-	for (int k = 0; k < 4; k++)
-	{
-		sum(k, i, x);
-	}
-}
-
-void Block::rotation()
-{
-	string aux=mat[1][1];
-	mat[1][1]=mat[2][1];
-	mat[2][1]=mat[2][2];
-	mat[2][2]=mat[1][2];
-	mat[1][2]=aux;
-
-	aux=mat[0][0];
-	mat[0][0]=mat[0][1];
-	mat[0][1]=mat[0][2];
-	mat[0][2]=mat[0][3];
-	mat[0][3]=mat[1][3];
-	mat[1][3]=mat[2][3];
-	mat[2][3]=mat[3][3];
-	mat[3][3]=mat[3][2];
-	mat[3][2]=mat[3][1];
-	mat[3][1]=mat[3][0];
-	mat[3][0]=mat[2][0];
-	mat[2][0]=mat[1][0];
-	mat[1][0]=aux;
-
-}
-
-/*      0    1   2   3
-	0   x <- x <-x <-x
-	1   x    x <-x   x 
-	2   x    x ->x   x
-	3   x -> x ->x ->x
-
-
-*/
-void Block::invRotation()
-{
-	string aux=mat[2][1];
-	mat[2][1]=mat[1][1];
-	mat[1][1]=mat[1][2];
-	mat[1][2]=mat[2][2];
-	mat[2][2]=aux;
-	
-
-	aux=mat[0][0];
-	mat[0][0]=mat[1][0];
-	mat[1][0]=mat[2][0];
-	mat[2][0]=mat[3][0];
-	mat[3][0]=mat[3][1];
-	mat[3][1]=mat[3][2];
-	mat[3][2]=mat[3][3];
-	mat[3][3]=mat[2][3];
-	mat[2][3]=mat[1][3];
-	mat[1][3]=mat[0][3];
-	mat[0][3]=mat[0][2];
-	mat[0][2]=mat[0][1];
-	mat[0][1]=aux;
-}
-
-
-
-void Block::print()
-{
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			cout << mat[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << endl;
-}
-
-string Block::translate()
-{
-	string s;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			s.push_back((char)(int)strtol(mat[i][j].c_str(), NULL, 16));
-		}
-	}
-	cout << s;
-	return s;
-}
 
 void createBlocks(vector<Block *> &blocks, string msg)
 {
@@ -206,30 +42,41 @@ void deleteBlocks(vector<Block *> &blocks)
 
 void translateBlocks(vector<Block *> &blocks)
 {
-	cout << "TRANSLATE" << endl;
+	// //cout << "TRANSLATE" << endl;
 	for (auto it : blocks)
 	{
 		it->translate();
 	}
+	//cout << endl;
+}
+
+void translateBlocksInt(vector<Block *> &blocks)
+{
+	// //cout << "TRANSLATE" << endl;
+	for (auto it : blocks)
+	{
+		it->translateInt();
+	}
+	//cout << endl;
 }
 
 void alg1(vector<Block *> &blocks)
 {
+	//cout << "Algoritmo 1" << endl;
 	int i = 1;
 	for (auto it : blocks)
 	{
-		//Initial
-		cout << "Bloque " << i << endl;
-		it->print();
+		// Initial
+		// //cout << "Bloque " << i << endl;
+		// it->print();
 
-		//Encrypt
-		it->swapCol(0, 1);
-		it->print();
-		
-		it->sumRow(1,253);
-		it->print();
-		//Decrypt
-	
+		// Encrypt
+		// it->swapCol(0, 1);
+		// it->print();
+
+		it->sumRow(1, 253);
+		// it->print();
+		//  Decrypt
 
 		i++;
 	}
@@ -237,18 +84,20 @@ void alg1(vector<Block *> &blocks)
 
 void decryptalg1(vector<Block *> &blocks)
 {
+	//cout << "Decrypt 1: ";
+	//cout << "" << endl;
 	int i = 1;
 	for (auto it : blocks)
 	{
-		//Initial
-		cout << "Bloque " << i << endl;
-		it->print();
+		// Initial
+		// //cout << "Bloque " << i << endl;
+		// it->print();
 
-		it->sumRow(1,-253);
-		it->print();
+		it->sumRow(1, 256 - 253);
+		// it->print();
 
-		it->swapCol(0, 1);
-		it->print();
+		// it->swapCol(0, 1);
+		//  it->print();
 
 		i++;
 	}
@@ -256,36 +105,145 @@ void decryptalg1(vector<Block *> &blocks)
 
 void alg2(vector<Block *> &blocks)
 {
+	//cout << "Algoritmo 2: ";
+	//cout << "Rotar" << endl;
 	int i = 1;
 	for (auto it : blocks)
 	{
-		//INITIAL
-		cout << "Bloque " << i << endl;
-		it->print();
-		//Encrypt
-		cout<<"Rotada"<<endl;
+		// INITIAL
+		// //cout << "Bloque " << i << endl;
+		// it->print();
+		//  Encrypt
+		// //cout << "Rotada" << endl;
 		it->rotation();
-		it->print();
+		// it->print();
 		i++;
 	}
 }
 
 void decryptalg2(vector<Block *> &blocks)
 {
+	//cout << "Decrypt 2" << endl;
+
 	int i = 1;
 	for (auto it : blocks)
 	{
-		//INITIAL
-		cout << "Bloque " << i << endl;
-		it->print();
-		//Encrypt
+		// INITIAL
+		// //cout << "Bloque " << i << endl;
+		// it->print();
+		//  Encrypt
 		it->invRotation();
-		it->print();
+		// it->print();
 
 		i++;
 	}
 }
 
+void alg3(vector<Block *> &blocks, Block clave)
+{
+	//cout << "Algoritmo 3: ";
+	//cout << "Sumar clave" << endl;
+	int i = 1;
+	for (auto it : blocks)
+	{
+		// INITIAL
+		// //cout << "Bloque " << i << endl;
+		// it->print();
+		//  Encrypt
+		it->sumBlock(clave);
+		// it->print();
+		i++;
+	}
+}
+
+void decryptalg3(vector<Block *> &blocks, Block clave)
+{
+	//cout << "Decrypt 3: ";
+	//cout << "Restar clave" << endl;
+	int i = 1;
+	for (auto it : blocks)
+	{
+		// INITIAL
+		// //cout << "Bloque " << i << endl;
+		// it->print();
+		//  Encrypt
+
+		it->subsBlock(clave);
+		// it->print();
+		i++;
+	}
+}
+
+void alg4(vector<Block *> &blocks, Block clave)
+{
+	//cout << "Algoritmo 4: ";
+	//cout << "XOR clave" << endl;
+	int i = 1;
+	for (auto it : blocks)
+	{
+		// INITIAL
+		// //cout << "Bloque " << i << endl;
+		// it->print();
+		//  Encrypt
+		it->xorBlock(clave);
+		// it->print();
+		i++;
+	}
+}
+
+void decryptalg4(vector<Block *> &blocks, Block clave)
+{
+	//cout << "Decrypt 4: ";
+	//cout << "XOR clave" << endl;
+	int i = 1;
+	for (auto it : blocks)
+	{
+		it->xorBlock(clave);
+		i++;
+	}
+}
+
+
+void alg5(vector<Block *> &blocks)
+{
+	//cout << "Algoritmo 5: ";
+	//cout << "XOR clave" << endl;
+	int i = 1;
+	for (auto it : blocks)
+	{
+		it->transpuestaDifusion();
+		i++;
+	}
+}
+
+void decryptalg5(vector<Block *> &blocks)
+{
+	//cout << "Decrypt 4: ";
+	//cout << "XOR clave" << endl;
+	int i = 1;
+	for (auto it : blocks)
+	{
+		it->transpuestaDifusion();
+		i++;
+	}
+}
+
+void roundEncrypt(vector<Block *> &blocks, Block clave){
+	alg1(blocks);
+	alg2(blocks);
+	alg3(blocks,clave);
+	alg4(blocks,clave);
+	alg5(blocks);
+}
+
+void roundDesencrypt(vector<Block *> &blocks, Block clave){
+	decryptalg5(blocks);
+	decryptalg4(blocks, clave);
+	decryptalg3(blocks, clave);
+	decryptalg2(blocks);
+	decryptalg1(blocks);
+	
+}
 
 int main()
 {
@@ -293,25 +251,33 @@ int main()
 
 	// Mensaje que se va a mandar
 	string texto = "hola soy yo";
+	string str_clave = "UnoDosTresCuatr"; // Tiene que ser de 16 caracteres
+	Block clave(str_clave);
 	vector<Block *> blocks; // Vector de apuntado de bloques de 128 bytes
-	createBlocks(blocks,texto);
-	// Separa la palabra en bloques de 16 caracteres y llena blocks
+	createBlocks(blocks, texto);
+	
+	cout<<"Mensaje original: ";
+	translateBlocks(blocks);
+	cout<<endl;
+	for (int i=0;i<10;i++){
+		roundEncrypt(blocks,clave);
+	}
+	cout<<"Mensaje Encriptado en texto: ";
+	translateBlocks(blocks);
+	cout<<endl;
+	cout<<"Mensaje Encriptado en enteros:"<<endl;
+	translateBlocksInt(blocks);
 
-	//cout<<"Algoritmo 1"<<endl;
-	//alg1(blocks);
-	//cout<<"Decrypt Algoritmo 1"<<endl;
-	//decryptalg1(blocks);
-	cout<<"Algoritmo 2"<<endl;
-	alg2(blocks);
-	cout<<"Decrypt Algoritmo 2"<<endl;
-	decryptalg2(blocks);
+	for (int i=0;i<10;i++){
+		roundDesencrypt(blocks,clave);
+	}
+	cout<<"Mensaje Desencriptado: ";
+	translateBlocks(blocks);
 
-
-	translateBlocks(blocks); // Imprime el que esta guardado actualmente en Blocks
 
 	deleteBlocks(blocks); // Es para liberar el espacio de la memoria dinamica wuu
 
 	return 0;
 }
 
-//Arreglar suma
+// Arreglar suma
